@@ -1,6 +1,15 @@
 using BlazorServerCrudNet8.Components;
+using BlazorServerCrudNet8.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+const string nameString = "nombreConexion";
+var nameconfig = builder.Configuration.GetConnectionString(nameString);
+
+builder.Services.AddDbContext<DataContext>(opc => opc.UseSqlServer(nameconfig));
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

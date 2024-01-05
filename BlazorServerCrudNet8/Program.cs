@@ -1,5 +1,7 @@
 using BlazorServerCrudNet8.Components;
 using BlazorServerCrudNet8.Data;
+using BlazorServerCrudNet8.Services;
+using BlazorServerCrudNet8.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -8,7 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 const string nameString = "nombreConexion";
 var nameconfig = builder.Configuration.GetConnectionString(nameString);
 
+//Servicios Agregados
 builder.Services.AddDbContext<DataContext>(opc => opc.UseSqlServer(nameconfig));
+
+builder.Services.AddScoped<IVideoGameService, VideoGameService>();
 
 
 // Add services to the container.

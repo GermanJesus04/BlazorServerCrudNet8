@@ -1,0 +1,70 @@
+﻿@page "/games"
+
+@* @rendermode InteractiveServer *@
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+@inject IVideoGameService _videoGameServices
+@inject NavigationManager _navegation
+
+<PageTitle>Video Games</PageTitle>
+<h3>Video Games</h3>
+
+@if(_videoGames.Count() == 0)
+{
+    <p><em>Loading Video Games</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Publisher</th>
+                <th>Release Year</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var game in _videoGames)
+            {
+                <tr>
+                    <td> @game.Title </td>
+                    <td> @game.Publisher </td>
+                    <td> @game.ReleaseYear </td>
+                    <td><button class="btn btn-primary" @onclick = "(() => EditGame(game.Id))" > Edit </button></td>
+                    <td><button class="btn btn-danger" @onclick="(() => DeleteGame(game.Id))"> Delete </button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" @onclick="@(() => AddGame())">Add a New Game</button>
+}
+
+@code {
+    List<VideoGame> _videoGames = new List<VideoGame>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        _videoGames = await _videoGameServices.GetAllVideoGames(); 
+    }
+
+    void EditGame(int id)
+    {
+        _navegation.NavigateTo($"/edit-game/{id}");
+    }
+
+    async Task DeleteGame(int id)
+    {
+        await _videoGameServices.DeleteGameAsync(id);
+        _videoGames = await _videoGameServices.GetAllVideoGames();
+
+    }
+
+    void AddGame()
+    {
+        _navegation.NavigateTo($"/edit-game");
+    }
+
+}

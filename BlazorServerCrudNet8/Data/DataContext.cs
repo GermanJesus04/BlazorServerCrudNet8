@@ -36,9 +36,6 @@ namespace BlazorServerCrudNet8.Data
                     ReleaseYear = 1998
                 }
 
-
-
-
                 );
         }
 

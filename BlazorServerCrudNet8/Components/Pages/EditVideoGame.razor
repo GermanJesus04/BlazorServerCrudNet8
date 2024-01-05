@@ -1,0 +1,72 @@
+﻿@page "/edit-game"
+@page "/edit-game/{Id:int}"
+@inject IVideoGameService _videoGameServices
+@inject NavigationManager _navegar
+
+@rendermode InteractiveServer
+
+
+@if(Id is null)
+{
+    <PageTitle>Add a New Video Game</PageTitle>
+    <h3>Add a New Video Game</h3>
+}
+else
+{
+    <PageTitle>Edit @CurrentGame.Title</PageTitle>
+    <h3>Edit @CurrentGame.Title</h3>
+}
+
+<EditForm Model="CurrentGame" OnSubmit="HandleSubmit">
+    <div>
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="CurrentGame.Title" class="form-control"/>
+    </div>
+    <div>
+        <label for="publisher">Publisher</label>
+        <InputText id="publisher" @bind-Value="CurrentGame.Publisher" class="form-control" />
+    </div>
+    <div>
+        <label for="releaseyear">Release Year</label>
+        <InputNumber id="releaseyear" @bind-Value="CurrentGame.ReleaseYear" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    public VideoGame CurrentGame { get; set; } = new VideoGame();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(Id is not null)
+        {
+            var game = await _videoGameServices.GetVideoGameByIdAsync((int)Id);
+            if(game is not null)
+            {
+                CurrentGame = game;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if(Id is not null)
+        {
+            //update
+            await _videoGameServices.UpdateGameAsync(CurrentGame,(int)Id);
+            _navegar.NavigateTo("/games");
+        }
+        else
+        {
+            //add
+            await _videoGameServices.AddGameAsync(CurrentGame);
+            _navegar.NavigateTo("/games");
+
+        }
+    }
+
+}
